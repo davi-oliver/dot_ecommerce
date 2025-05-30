@@ -1,8 +1,11 @@
+"use client"
+
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Star, Heart, ShoppingCart } from "lucide-react"
 import Image from "next/image"
+import { useCart } from "@/contexts/cart-context"
 
 export default function FeaturedProducts() {
   const featuredProducts = [
@@ -47,6 +50,20 @@ export default function FeaturedProducts() {
       badge: "Destaque",
     },
   ]
+
+  const { addItem, isInCart, getItemQuantity } = useCart()
+
+  const handleAddToCart = (product: any) => {
+    addItem({
+      id: product.id.toString(),
+      name: product.name,
+      price: product.price,
+      originalPrice: product.originalPrice,
+      image: product.image,
+      brand: "Marca", // You can add brand to your product data
+      maxStock: 50, // You can add stock info to your product data
+    })
+  }
 
   return (
     <section className="py-12 md:py-16 bg-muted/30">
@@ -108,9 +125,11 @@ export default function FeaturedProducts() {
                     </div>
                   </div>
 
-                  <Button className="w-full" size="sm">
+                  <Button className="w-full" size="sm" onClick={() => handleAddToCart(product)}>
                     <ShoppingCart className="h-4 w-4 mr-2" />
-                    Adicionar ao Carrinho
+                    {isInCart(product.id.toString())
+                      ? `No Carrinho (${getItemQuantity(product.id.toString())})`
+                      : "Adicionar ao Carrinho"}
                   </Button>
                 </div>
               </CardContent>

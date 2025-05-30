@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { Star, ShoppingCart, Heart, Share2, Truck, Shield, RotateCcw, Minus, Plus } from "lucide-react"
+import { useCart } from "@/contexts/cart-context"
 
 interface ProductInfoProps {
   product: any
@@ -15,6 +16,8 @@ export default function ProductInfo({ product }: ProductInfoProps) {
   const [selectedColor, setSelectedColor] = useState(product.variants.color[0].value)
   const [selectedStorage, setSelectedStorage] = useState(product.variants.storage[0].value)
   const [quantity, setQuantity] = useState(1)
+
+  const { addItem, isInCart, getItemQuantity } = useCart()
 
   const selectedStorageOption = product.variants.storage.find((s: any) => s.value === selectedStorage)
   const currentPrice = selectedStorageOption?.price || product.price
@@ -30,6 +33,36 @@ export default function ProductInfo({ product }: ProductInfoProps) {
       setQuantity(quantity - 1)
     }
   }
+
+  const handleAddToCart = () => {
+    const selectedColorOption = product.variants.color.find((c: any) => c.value === selectedColor)
+    const selectedStorageOption = product.variants.storage.find((s: any) => s.value === selectedStorage)
+
+    addItem(
+      {
+        id: product.id,
+        name: product.name,
+        price: currentPrice,
+        originalPrice: product.originalPrice,
+        image: product.images[0],
+        brand: product.brand,
+        maxStock: product.stockQuantity,
+        variant: {
+          color: selectedColorOption?.name,
+          storage: selectedStorageOption?.name,
+        },
+      },
+      quantity,
+    )
+  }
+
+  const currentVariant = {
+    color: product.variants.color.find((c: any) => c.value === selectedColor)?.name,
+    storage: product.variants.storage.find((s: any) => s.value === selectedStorage)?.name,
+  }
+
+  const itemInCart = isInCart(product.id, currentVariant)
+  const cartQuantity = getItemQuantity(product.id, currentVariant)
 
   return (
     <div className="space-y-6">
@@ -146,9 +179,9 @@ export default function ProductInfo({ product }: ProductInfoProps) {
 
       {/* Action Buttons */}
       <div className="space-y-3">
-        <Button size="lg" className="w-full" disabled={!product.inStock}>
+        <Button size="lg" className="w-full" disabled={!product.inStock} onClick={handleAddToCart}>
           <ShoppingCart className="h-5 w-5 mr-2" />
-          Adicionar ao Carrinho
+          {itemInCart ? `Atualizar Carrinho (${cartQuantity + quantity})` : "Adicionar ao Carrinho"}
         </Button>
 
         <div className="grid grid-cols-2 gap-3">

@@ -1,3 +1,5 @@
+"use client"
+
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -5,6 +7,7 @@ import { Star, Heart, ShoppingCart, Eye } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 import ProductPagination from "./product-pagination"
+import { useCart } from "@/contexts/cart-context"
 
 interface ProductGridProps {
   category: string
@@ -118,6 +121,20 @@ export default function ProductGrid({ category, searchParams }: ProductGridProps
   const currentPage = Number.parseInt(searchParams.page || "1")
   const { products, totalProducts, totalPages } = generateProducts(category, currentPage)
 
+  const { addItem, isInCart, getItemQuantity } = useCart()
+
+  const handleAddToCart = (product: any) => {
+    addItem({
+      id: product.id.toString(),
+      name: product.name,
+      price: product.price,
+      originalPrice: product.originalPrice,
+      image: product.image,
+      brand: product.brand,
+      maxStock: 50,
+    })
+  }
+
   if (products.length === 0) {
     return (
       <div className="text-center py-12">
@@ -219,9 +236,18 @@ export default function ProductGrid({ category, searchParams }: ProductGridProps
                 </div>
 
                 {/* Add to Cart Button */}
-                <Button className="w-full" size="sm" disabled={!product.inStock}>
+                <Button
+                  className="w-full"
+                  size="sm"
+                  disabled={!product.inStock}
+                  onClick={() => handleAddToCart(product)}
+                >
                   <ShoppingCart className="h-4 w-4 mr-2" />
-                  {product.inStock ? "Adicionar ao Carrinho" : "Produto Esgotado"}
+                  {product.inStock
+                    ? isInCart(product.id.toString())
+                      ? `No Carrinho (${getItemQuantity(product.id.toString())})`
+                      : "Adicionar ao Carrinho"
+                    : "Produto Esgotado"}
                 </Button>
               </div>
             </CardContent>

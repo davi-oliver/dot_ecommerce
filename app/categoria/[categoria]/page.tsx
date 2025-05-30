@@ -4,6 +4,7 @@ import ProductFilters from "@/components/category/product-filters"
 import ProductGrid from "@/components/category/product-grid"
 import ProductSort from "@/components/category/product-sort"
 import Breadcrumbs from "@/components/category/breadcrumbs"
+import Footer from "@/components/footer"
 import { Button } from "@/components/ui/button"
 import { Filter } from "lucide-react"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
@@ -113,6 +114,7 @@ export default function CategoryPage({ params, searchParams }: CategoryPageProps
           </main>
         </div>
       </div>
+      <Footer />
     </div>
   )
 }

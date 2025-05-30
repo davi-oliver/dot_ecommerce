@@ -1,8 +1,6 @@
 "use client"
-
-import { useState } from "react"
 import Link from "next/link"
-import { Search, ShoppingCart, User, Menu, Heart } from "lucide-react"
+import { Search, User, Menu, Heart } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import {
@@ -21,12 +19,10 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu"
-import { Badge } from "@/components/ui/badge"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
+import CartSheet from "@/components/cart/cart-sheet"
 
 export default function Header() {
-  const [cartItems] = useState(3)
-
   const categories = [
     { name: "Eletrônicos", href: "/categoria/eletronicos" },
     { name: "Roupas", href: "/categoria/roupas" },
@@ -102,15 +98,7 @@ export default function Header() {
           </Button>
 
           {/* Cart */}
-          <Button variant="ghost" size="icon" className="relative">
-            <ShoppingCart className="h-5 w-5" />
-            {cartItems > 0 && (
-              <Badge className="absolute -top-2 -right-2 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs">
-                {cartItems}
-              </Badge>
-            )}
-            <span className="sr-only">Carrinho de compras</span>
-          </Button>
+          <CartSheet />
 
           {/* User Profile */}
           <DropdownMenu>

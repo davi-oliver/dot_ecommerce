@@ -1,8 +1,11 @@
+"use client"
+
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Star, TrendingUp } from "lucide-react"
+import { Star, TrendingUp, ShoppingCart } from "lucide-react"
 import Image from "next/image"
+import { useCart } from "@/contexts/cart-context"
 
 export default function BestSellers() {
   const bestSellers = [
@@ -62,6 +65,19 @@ export default function BestSellers() {
     },
   ]
 
+  const { addItem, isInCart, getItemQuantity } = useCart()
+
+  const handleAddToCart = (product: any) => {
+    addItem({
+      id: product.id.toString(),
+      name: product.name,
+      price: product.price,
+      image: product.image,
+      brand: "Marca",
+      maxStock: 50,
+    })
+  }
+
   return (
     <section className="py-12 md:py-16">
       <div className="container px-4">
@@ -114,9 +130,15 @@ export default function BestSellers() {
                       <span className="text-xl font-bold text-primary">
                         R$ {product.price.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
                       </span>
-                      <Button size="sm" variant="outline">
-                        Ver Produto
-                      </Button>
+                      <div className="flex gap-2">
+                        <Button size="sm" variant="outline" className="flex-1">
+                          Ver Produto
+                        </Button>
+                        <Button size="sm" onClick={() => handleAddToCart(product)} className="flex-1">
+                          <ShoppingCart className="h-4 w-4 mr-1" />
+                          {isInCart(product.id.toString()) ? "No Carrinho" : "Adicionar"}
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 </div>
